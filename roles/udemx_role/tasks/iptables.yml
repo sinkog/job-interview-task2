@@ -1,0 +1,12 @@
+- name: Iptables beállítása
+  ansible.builtin.command: |
+    iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+    iptables -A INPUT -p tcp --dport 443 -j ACCEPT
+    iptables -A INPUT -p tcp --dport 3306 -j ACCEPT
+    iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+    iptables -A INPUT -p tcp -j DROP
+  args:
+    warn: false
+
+- name: Iptables szabályok mentése
+  ansible.builtin.command: iptables-save > /etc/iptables/rules.v4

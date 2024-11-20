@@ -18,3 +18,29 @@
     image: hello-world
     state: started
 
+- name: Laravel demo Docker Compose fájl létrehozása
+  ansible.builtin.copy:
+    dest: /srv/laravel-docker/docker-compose.yml
+    content: |
+      version: '3.8'
+      services:
+        app:
+          image: laravel
+          ports:
+            - "8080:80"
+          depends_on:
+            - db
+        db:
+          image: mariadb
+          environment:
+            MYSQL_ROOT_PASSWORD: rootpassword
+            MYSQL_DATABASE: laravel_db
+            MYSQL_USER: laravel
+            MYSQL_PASSWORD: laravelpassword
+
+- name: Laravel demo Docker Compose futtatása
+  ansible.builtin.command: docker-compose up -d
+  args:
+    chdir: /srv/laravel-docker
+
+

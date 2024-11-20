@@ -20,6 +20,17 @@ Ez a projekt egy Ansible playbook, amely automatizálja az alábbi szolgáltatá
   - Telepíti a Gitet és beállítja az alapértelmezett felhasználót (`udemx@udemx.eu`).
   - EXTRA1: SSH kulcs alapú Git elérés beállítása.
 
+- **Iptables beállítása**:
+  - Csak az alkalmazásokhoz szükséges portok legyenek nyitva a virtuális gépen.
+
+- **Shell script feladatok**:
+  - **MySQL dump készítése** a napi mentéshez.
+  - **Legutóbbi fájlok listázása** a `/var/log` mappából.
+  - **Load average kiíratása** a rendszer állapotáról.
+  - **NGINX konfiguráció** módosítása, hogy a `<title>` sztringben az `Welcome to nginx!` helyett `Title: ` szerepeljen.
+
+- **Docker Compose** segítségével Laravel demo alkalmazás futtatása külön adatbázissal és webszerverrel.
+
 ## Előfeltételek
 
 - Linux-alapú operációs rendszer (tesztelve Ubuntu/Debian rendszeren).
@@ -51,17 +62,20 @@ ansible-project/
 ├── inventory.ini          # Ansible inventory fájl
 ├── playbook.yml           # Fő playbook
 └── roles/
-    └── udemx_role/
-        ├── tasks/         # Feladatdefiníciók
-        │   ├── main.yml   # Fő feladatok importálása
-        │   ├── nginx.yml  # NGINX telepítés
-        │   ├── mariadb.yml # MariaDB telepítés
-        │   ├── docker.yml # Docker telepítés
-        │   └── git.yml    # Git telepítés
-        ├── templates/     # Konfigurációs sablonok
-        │   ├── index.html.j2    # NGINX HTML sablon
-        │   └── ssl_cert.sh.j2   # Self-signed tanúsítvány script
-        └── handlers/      # Szolgáltatások újraindítása
+|   └── udemx_role/
+|       ├── tasks/         # Feladatdefiníciók
+|       │   ├── main.yml   # Fő feladatok importálása
+|       │   ├── nginx.yml  # NGINX telepítés
+|       │   ├── mariadb.yml # MariaDB telepítés
+|       │   ├── docker.yml # Docker telepítés
+|       │   └── git.yml    # Git telepítés
+│       │   ├── iptables.yml# Iptables beállítása
+│       │   └── scripts.yml # Shell scriptek és cron beállítások
+|       ├── templates/     # Konfigurációs sablonok
+|       │   ├── index.html.j2    # NGINX HTML sablon
+|       │   └── ssl_cert.sh.j2   # Self-signed tanúsítvány script
+|       └── handlers/      # Szolgáltatások újraindítása
+└── README.md               # A projekt dokumentációja
 ```
 
 ## Használat
@@ -102,11 +116,29 @@ ansible-project/
 - **Git**:
     - Globális Git-beállításokat végez és SSH-kulcs alapú hitelesítést konfigurál.
 
+- **Vim kilépés**:
+    - :q :quit egyszerű kilépés (ha változtattál valamit a file-ben akkor nem engedi kilépni)
+    - :q! :quit! változtatások elsobásával való kilépés
+    - :wq :x ment és kilép
+
+- **Iptables beállítása**:
+    - 80 (HTTP), 443 (HTTPS), 3306 (MariaDB) és 22 (SSH) portok nyitása.
+    - Az összes egyéb port blokkolása.
+
+- **Shell scriptek és cron beállítások**
+    - **MySQL dump készítése**, amely minden nap hajnali 2 órakor lefut.
+    - A **3 legutóbb módosított fájl listázása** a `/var/log` mappából.
+    - A **5 napon belül módosított fájlok listázása** rekurzívan a `/var/log/*` mappákból.
+    - A **load average** kiíratása a `/proc/loadavg` fájlból.
+    - Az **NGINX konfigurációs fájlban** a `<title>` tag módosítása a kívánt értékre.
+
+- **Docker Compose Laravel Demo Alkalmazás**
+    - Laravel alkalmazás (web) konténer.
+    - MariaDB adatbázis konténer.
+
+Ez biztosítja az alkalmazás elkülönítését és skálázhatóságát.
 ## Megjegyzések
 
 - A playbook sudo jogosultságot igényel a futtató felhasználótól. Győződj meg arról, hogy az `ansible_become_pass` meg van adva a futtatás során.
 - Éles környezetben a self-signed tanúsítvány helyett érvényes SSL tanúsítványt használj.
 
-## Licenc
-
-Ez a projekt nyílt forráskódú, és az MIT Licenc alatt érhető el.

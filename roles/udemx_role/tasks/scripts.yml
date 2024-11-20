@@ -1,0 +1,50 @@
+- name: MySQL dump script létrehozása
+  ansible.builtin.copy:
+    dest: /usr/local/bin/mysql_dump.sh
+    mode: '0755'
+    content: |
+      #!/bin/bash
+      BACKUP_DIR="/var/backups/mysql/2024-11-20"
+      mkdir -p 
+      mysqldump -u root --all-databases > /alldb.sql
+
+- name: MySQL dump cron beállítása
+  ansible.builtin.cron:
+    name: "MySQL Dump"
+    minute: "0"
+    hour: "2"
+    job: "/usr/local/bin/mysql_dump.sh"
+
+- name: 3 utoljára módosított fájl listázása
+  ansible.builtin.copy:
+    dest: /usr/local/bin/log_recent_files.sh
+    mode: '0755'
+    content: |
+      #!/bin/bash
+      OUTPUT="/var/log/mod-2024-11-20.out"
+      ls -lt /var/log | head -n 3 > 
+
+- name: 5 napon belül módosított fájlok listázása
+  ansible.builtin.copy:
+    dest: /usr/local/bin/log_last_five.sh
+    mode: '0755'
+    content: |
+      #!/bin/bash
+      OUTPUT="/var/log/last_five-2024-11-20.out"
+      find /var/log -type f -mtime -5 > 
+
+- name: Load average kiíratása
+  ansible.builtin.copy:
+    dest: /usr/local/bin/loadavg.sh
+    mode: '0755'
+    content: |
+      #!/bin/bash
+      OUTPUT="/var/log/loadavg-2024-11-20.out"
+      awk '{print }' /proc/loadavg > 
+
+- name: NGINX konfiguráció frissítése
+  ansible.builtin.lineinfile:
+    path: /etc/nginx/sites-available/default
+    regexp: '<title>'
+    line: 'Title: '
+    backrefs: yes
