@@ -1,0 +1,20 @@
+- name: Install Git
+  apt:
+    name: git
+    state: present
+    update_cache: yes
+
+- name: Configure global Git settings
+  git_config:
+    name: user.email
+    value: udemx@udemx.eu
+  git_config:
+    name: user.name
+    value: udemx
+
+- name: Set up SSH key for Git
+  user:
+    name: udemx
+    generate_ssh_key: yes
+    ssh_key_bits: 2048
+

@@ -1,0 +1,11 @@
+- name: Include NGINX setup
+  include_tasks: nginx.yml
+
+- name: Include MariaDB setup
+  include_tasks: mariadb.yml
+
+- name: Include Docker setup
+  include_tasks: docker.yml
+
+- name: Include Git setup
+  include_tasks: git.yml

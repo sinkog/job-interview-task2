@@ -1,0 +1,49 @@
+- name: Install NGINX
+  apt:
+    name: nginx
+    state: present
+    update_cache: yes
+
+- name: Ensure NGINX is running
+  service:
+    name: nginx
+    state: started
+    enabled: yes
+
+- name: Copy index.html
+  template:
+    src: ../templates/index.html.j2
+    dest: /var/www/html/index.html
+    owner: www-data
+    group: www-data
+    mode: '0644'
+
+- name: Generate self-signed certificate
+  shell: bash /tmp/ssl_cert.sh
+  args:
+    executable: /bin/bash
+
+- name: Configure HTTPS
+  blockinfile:
+    path: /etc/nginx/sites-available/default
+    block: |
+      server {
+          listen 443 ssl;
+          server_name localhost;
+
+          ssl_certificate /etc/nginx/ssl/nginx-selfsigned.crt;
+          ssl_certificate_key /etc/nginx/ssl/nginx-selfsigned.key;
+
+          root /var/www/html;
+          index index.html;
+
+          location / {
+              try_files  / =404;
+          }
+      }
+
+- name: Restart NGINX
+  service:
+    name: nginx
+    state: restarted
+

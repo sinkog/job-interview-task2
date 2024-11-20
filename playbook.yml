@@ -1,0 +1,9 @@
+- hosts: all
+  become: yes
+  become_method: sudo
+  vars_prompt:
+    - name: "ansible_become_pass"
+      prompt: "Enter your sudo password"
+      private: yes
+  roles:
+    - udemx_role
